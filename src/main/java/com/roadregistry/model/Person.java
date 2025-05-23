@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.io.FileWriter;
 
+import com.roadregistry.model.Utility;
+
 public class Person {
 
     private String personID;
@@ -24,7 +26,7 @@ public class Person {
     }
 
     public boolean addPerson(){
-        if(validateID(personID) && validateAddress(address) && validateBirthdate(birthDate)) {
+        if(Utility.validateID(personID) && Utility.validateAddress(address) && Utility.validateBirthdate(birthDate)) {
             try {
                 FileWriter writer = new FileWriter("person.txt");
                 writer.write(personID + "|" + firstName + "|" + lastName + "|" + address + "|" + birthDate);
@@ -37,14 +39,5 @@ public class Person {
         else {
             return false;
         }
-    }
-    private boolean validateID(String id){
-        return id.matches("^[2-9][0-9][^A-Za-z0-9]{2,}.*[A-Z]{2}$") && id.length() == 10;
-    }
-    private boolean validateAddress(String address){
-        return address.matches("\\d+\\|.+\\|.+\\|Victoria\\|.+");
-    }
-    private boolean validateBirthdate(String birthDate){
-        return birthDate.matches("\\d{4}-\\d{2}-\\d{2}");
     }
 }
