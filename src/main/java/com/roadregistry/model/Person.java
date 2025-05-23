@@ -29,7 +29,7 @@ public class Person {
         if(Utility.validateID(personID) && Utility.validateAddress(address) && Utility.validateBirthdate(birthDate)) {
             try {
                 FileWriter writer = new FileWriter("person.txt");
-                writer.write(personID + "|" + firstName + "|" + lastName + "|" + address + "|" + birthDate);
+                writer.write(personID + "," + firstName + "," + lastName + "," + address + "," + birthDate);
                 return true;
             } catch (IOException e) {
                 System.out.println("Error writing to file");

@@ -3,7 +3,7 @@ package com.roadregistry.model;
 public class Utility {
 
     public static boolean validateID(String id){
-        return id.matches("^[2-9][0-9][^A-Za-z0-9]{2,}.*[A-Z]{2}$") && id.length() == 10;
+        return id.matches("^[2-9][0-9][^A-Za-z0-9]{2,}.*[A-Za-z]{2}$") && id.length() == 10;
     }
 
     public static boolean validateAddress(String address){
