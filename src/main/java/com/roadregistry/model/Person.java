@@ -22,9 +22,33 @@ public class Person {
     private String birthDate;
     private HashMap<Date, Integer> demeritPoints;
 
-    private boolean suspended;
+    private boolean isSuspended;
     private String offenseDate;
     private int points;
+
+    public void setOffenseDate(String offenseDate) {
+        this.offenseDate = offenseDate;
+    }
+
+    public String getOffenseDate() {
+        return this.offenseDate;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public int getPoints() {
+        return this.points;
+    }
+
+    public void setSuspended(boolean suspended) {
+        this.isSuspended = suspended;
+    }
+
+    public boolean isSuspended() {
+        return this.isSuspended;
+    }
 
 
     public void addDemerit(int points, Date date) {
@@ -65,7 +89,7 @@ public class Person {
         this.address = address;
         this.birthDate = birthDate;
         this.demeritPoints = new HashMap<>();
-        this.suspended = false;
+        this.isSuspended = false;
     }
 
     public boolean addPerson() {
