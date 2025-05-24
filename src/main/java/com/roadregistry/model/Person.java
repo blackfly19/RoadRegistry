@@ -24,6 +24,7 @@ public class Person {
     private String address;
     private String birthDate;
     private HashMap<Date, Integer> demeritPoints;
+
     private boolean isSuspended;
     private String offenseDate;
     private int points;
@@ -32,6 +33,11 @@ public class Person {
     public void addDemerit(int points, Date date) {
         demeritPoints.put(date, points);
     }
+
+    public void setSuspended(boolean suspended) {
+        this.isSuspended = suspended;
+    }
+
 
     public int getAge() {
         try {
