@@ -1,16 +1,13 @@
 package com.roadregistry.model;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.io.FileWriter;
-import java.util.List;
 
-import com.roadregistry.model.Utility;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,7 +22,7 @@ public class Person {
     private String birthDate;
     private HashMap<Date, Integer> demeritPoints;
 
-    private boolean isSuspended;
+    private boolean suspended;
     private String offenseDate;
     private int points;
 
@@ -34,9 +31,7 @@ public class Person {
         demeritPoints.put(date, points);
     }
 
-    public void setSuspended(boolean suspended) {
-        this.isSuspended = suspended;
-    }
+
 
 
     public int getAge() {
@@ -70,7 +65,7 @@ public class Person {
         this.address = address;
         this.birthDate = birthDate;
         this.demeritPoints = new HashMap<>();
-        this.isSuspended = false;
+        this.suspended = false;
     }
 
     public boolean addPerson() {
