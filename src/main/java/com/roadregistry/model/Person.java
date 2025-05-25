@@ -8,6 +8,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.io.FileWriter;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -147,9 +150,57 @@ public class Person {
         return "Success";
 
     }
+    public static boolean updatePersonalDetails(Path filePath, String newID, String newFirstName,
+                                                String newLastName, String newAddress, String newBirthday) throws IOException {
 
+        String content = Files.readString(filePath);
+        String[] parts = content.split(",");
 
+        String currentID = parts[0];
+        String currentFirstName = parts[1];
+        String currentLastName = parts[2];
+        String currentAddress = parts[3];
+        String currentBirthday = parts[4];
 
+        if (!Utility.validateID(newID) || !Utility.validateAddress(newAddress) || !Utility.validateBirthdate(newBirthday)) {
+            return false;
+        }
 
+        int age;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+            Date birthDate = sdf.parse(currentBirthday);
+            Date today = new Date();
+            long ageInMillis = today.getTime() - birthDate.getTime();
+            age = (int) (ageInMillis / (1000L * 60 * 60 * 24 * 365));
+        } catch (Exception e) {
+            return false;
+        }
 
+        if (age < 18 && !newAddress.equals(currentAddress)) {
+            return false;
+        }
+
+        if (!newBirthday.equals(currentBirthday)) {
+            if (!newID.equals(currentID) || !newFirstName.equals(currentFirstName) || !newLastName.equals(currentLastName) || !newAddress.equals(currentAddress)) {
+                return false;
+            }
+        }
+
+        char firstChar = currentID.charAt(0);
+        if (Character.isDigit(firstChar) && ((firstChar - '0') % 2 == 0) && !newID.equals(currentID)) {
+            return false;
+        }
+
+        parts[0] = newID;
+        parts[1] = newFirstName;
+        parts[2] = newLastName;
+        parts[3] = newAddress;
+        parts[4] = newBirthday;
+
+        String updatedContent = String.join(",", parts);
+        Files.writeString(filePath, updatedContent);
+
+        return true;
+    }
 }
