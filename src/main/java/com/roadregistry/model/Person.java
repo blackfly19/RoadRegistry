@@ -95,6 +95,7 @@ public class Person {
         this.isSuspended = false;
     }
 
+    //add person to the txt file after validating person's detail
     public boolean addPerson() {
         if (Utility.validateID(personID) && Utility.validateAddress(address) && Utility.validateBirthdate(birthDate)) {
             try {
