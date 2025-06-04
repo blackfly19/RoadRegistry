@@ -151,11 +151,11 @@ public class Person {
         return "Success";
 
     }
-    public static boolean updatePersonalDetails(Path filePath, String newID, String newFirstName,
-                                                String newLastName, String newAddress, String newBirthday) throws IOException {
-
+    public boolean updatePersonalDetails(Path filePath) throws IOException {
         String content = Files.readString(filePath);
         String[] parts = content.split(",");
+
+        if (parts.length != 5) return false;
 
         String currentID = parts[0];
         String currentFirstName = parts[1];
@@ -163,43 +163,43 @@ public class Person {
         String currentAddress = parts[3];
         String currentBirthday = parts[4];
 
-        if (!Utility.validateID(newID) || !Utility.validateAddress(newAddress) || !Utility.validateBirthdate(newBirthday)) {
+
+        if (!Utility.validateID(this.personID) || !Utility.validateAddress(this.address) || !Utility.validateBirthdate(this.birthDate)) {
             return false;
         }
 
         int age;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-            Date birthDate = sdf.parse(currentBirthday);
+            Date birthDateParsed = sdf.parse(currentBirthday);
             Date today = new Date();
-            long ageInMillis = today.getTime() - birthDate.getTime();
+            long ageInMillis = today.getTime() - birthDateParsed.getTime();
             age = (int) (ageInMillis / (1000L * 60 * 60 * 24 * 365));
         } catch (Exception e) {
             return false;
         }
 
-        if (age < 18 && !newAddress.equals(currentAddress)) {
+        // Restriction: Under 18 can't change address
+        if (age < 18 && !this.address.equals(currentAddress)) {
             return false;
         }
 
-        if (!newBirthday.equals(currentBirthday)) {
-            if (!newID.equals(currentID) || !newFirstName.equals(currentFirstName) || !newLastName.equals(currentLastName) || !newAddress.equals(currentAddress)) {
+        // Restriction: Birthdate change must keep other fields the same
+        if (!this.birthDate.equals(currentBirthday)) {
+            if (!this.personID.equals(currentID) || !this.firstName.equals(currentFirstName)
+                    || !this.lastName.equals(currentLastName) || !this.address.equals(currentAddress)) {
                 return false;
             }
         }
 
+        // Restriction: Cannot change ID if it starts with even digit
         char firstChar = currentID.charAt(0);
-        if (Character.isDigit(firstChar) && ((firstChar - '0') % 2 == 0) && !newID.equals(currentID)) {
+        if (Character.isDigit(firstChar) && ((firstChar - '0') % 2 == 0) && !this.personID.equals(currentID)) {
             return false;
         }
 
-        parts[0] = newID;
-        parts[1] = newFirstName;
-        parts[2] = newLastName;
-        parts[3] = newAddress;
-        parts[4] = newBirthday;
-
-        String updatedContent = String.join(",", parts);
+        // Update and write to file
+        String updatedContent = String.join(",", this.personID, this.firstName, this.lastName, this.address, this.birthDate);
         Files.writeString(filePath, updatedContent);
 
         return true;
