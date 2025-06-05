@@ -1,13 +1,10 @@
 package com.roadregistry.model;
 
 
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.io.FileWriter;
+import java.util.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +20,8 @@ public class Person {
     private boolean isSuspended;
     private String offenseDate;
     private int points;
+
+    private final String personFileName = "persons.txt";
 
     public String getPersonID() {
         return personID;
@@ -114,7 +113,7 @@ public class Person {
         //Validating personID, address and birthdate according to given conditions
         if (Utility.validateID(personID) && Utility.validateAddress(address) && Utility.validateBirthdate(birthDate)) {
             // try-with-resources
-            try (FileWriter writer = new FileWriter("person.txt")){
+            try (FileWriter writer = new FileWriter(personFileName, true)){
 
                 // Write to file if everything is correct
                 writer.write(personID + "," + firstName + "," + lastName + "," + address + "," + birthDate+"\n");
@@ -171,13 +170,35 @@ public class Person {
 
     }
 
-    public boolean updatePersonalDetails(Path filePath) throws IOException {
-        String content = Files.readString(filePath);
-        String[] parts = content.split(",");
+    public boolean updatePersonalDetails(String personID) throws IOException {
 
-        // To check the content in the person.txt file
-        if (parts.length != 5)
+        ArrayList<String> fileContent = new ArrayList<>();
+        File file = new File(personFileName);
+        int index = -1;
+        String []parts = new String[5];
+
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                fileContent.add(scanner.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
             return false;
+        }
+
+        for(int i=0;i < fileContent.size(); i++) {
+            String[] temp = fileContent.get(i).split(",");
+
+            // To check the content in the person.txt file
+            if (temp.length != 5)
+                return false;
+
+            if(temp[0].equals(personID)) {
+                index = i;
+                parts = temp;
+                break;
+            }
+        }
 
         String currentID = parts[0];
         String currentFirstName = parts[1];
@@ -191,7 +212,7 @@ public class Person {
         }
 
         // Restriction: Under 18 can't change address
-        if (Utility.dateDiffToday(currentBirthday) < 18 && !this.address.equals(currentAddress)) {
+        if (!this.address.equals(currentAddress) && Utility.dateDiffToday(currentBirthday) < 18) {
             return false;
         }
 
@@ -205,13 +226,17 @@ public class Person {
 
         // Restriction: Cannot change ID if it starts with even digit
         char firstChar = currentID.charAt(0);
-        if (Character.isDigit(firstChar) && ((firstChar - '0') % 2 == 0) && !this.personID.equals(currentID)) {
+        if (!this.personID.equals(currentID) && Character.isDigit(firstChar) && ((firstChar - '0') % 2 == 0)) {
             return false;
         }
 
         // Update and write to file
-        String updatedContent = String.join(",", this.personID, this.firstName, this.lastName, this.address, this.birthDate);
-        Files.writeString(filePath, updatedContent);
+        fileContent.set(index, String.join(",", this.personID, this.firstName, this.lastName, this.address, this.birthDate));
+        try(FileWriter writer = new FileWriter(file)) {
+            for (String s : fileContent) {
+                writer.write(s + "\n");
+            }
+        }
 
         return true;
     }
