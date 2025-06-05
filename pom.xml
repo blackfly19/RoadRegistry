@@ -28,13 +28,6 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
             <scope>test</scope> <!-- Test scope means it is only used for testing
 -->
         </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

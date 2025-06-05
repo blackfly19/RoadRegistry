@@ -4,6 +4,7 @@ package com.roadregistry.model;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.io.FileWriter;
@@ -11,11 +12,6 @@ import java.io.FileWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class Person {
 
     private String personID;
@@ -24,25 +20,56 @@ public class Person {
     private String address;
     private String birthDate;
     private HashMap<Date, Integer> demeritPoints;
-
     private boolean isSuspended;
     private String offenseDate;
     private int points;
 
-    public void setOffenseDate(String offenseDate) {
-        this.offenseDate = offenseDate;
+    public String getPersonID() {
+        return personID;
     }
 
-    public String getOffenseDate() {
-        return this.offenseDate;
+    public void setPersonID(String personID) {
+        this.personID = personID;
     }
 
-    public void setPoints(int points) {
-        this.points = points;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public int getPoints() {
-        return this.points;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public HashMap<Date, Integer> getDemeritPoints() {
+        return demeritPoints;
+    }
+
+    public void setDemeritPoints(HashMap<Date, Integer> demeritPoints) {
+        this.demeritPoints = demeritPoints;
     }
 
     public void setSuspended(boolean suspended) {
@@ -54,35 +81,21 @@ public class Person {
     }
 
 
-    public void addDemerit(int points, Date date) {
-        demeritPoints.put(date, points);
+    public String getOffenseDate() {
+        return offenseDate;
+    }
+
+    public void setOffenseDate(String offenseDate) {
+        this.offenseDate = offenseDate;
     }
 
 
-
-
-    public int getAge() {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-            Date birth = sdf.parse(birthDate);
-            Date today = new Date();
-            long ageInMillis = today.getTime() - birth.getTime();
-            return (int) (ageInMillis / (1000L * 60 * 60 * 24 * 365));
-        } catch (Exception e) {
-            return -1;
-        }
+    public int getPoints() {
+        return points;
     }
 
-    public int getDemeritsWithinTwoYears(Date referenceDate) {
-        int total = 0;
-        for (Date d : demeritPoints.keySet()) {
-            long diff = referenceDate.getTime() - d.getTime(); // compare each offense to the current one
-            long days = diff / (1000 * 60 * 60 * 24);
-            if (days >= 0 && days <= 730) { // include only those within 2 years before reference date
-                total += demeritPoints.get(d);
-            }
-        }
-        return total;
+    public void setPoints(int points) {
+        this.points = points;
     }
 
     public Person(String personID, String firstName, String lastName, String address, String birthDate) {
@@ -97,16 +110,22 @@ public class Person {
 
     //add person to the txt file after validating person's detail
     public boolean addPerson() {
+
+        //Validating personID, address and birthdate according to given conditions
         if (Utility.validateID(personID) && Utility.validateAddress(address) && Utility.validateBirthdate(birthDate)) {
-            try {
-                FileWriter writer = new FileWriter("person.txt");
-                writer.write(personID + "," + firstName + "," + lastName + "," + address + "," + birthDate);
+            // try-with-resources
+            try (FileWriter writer = new FileWriter("person.txt")){
+
+                // Write to file if everything is correct
+                writer.write(personID + "," + firstName + "," + lastName + "," + address + "," + birthDate+"\n");
                 return true;
             } catch (IOException e) {
                 System.out.println("Error writing to file");
                 return false;
             }
         } else {
+
+            // Return false if any field is incorrect
             return false;
         }
     }
@@ -130,10 +149,10 @@ public class Person {
         }
 
         // Step 3: Add demerit entry
-        this.addDemerit(points, date);
+        demeritPoints.put(date, points);
 
         // Step 4: Check suspension logic
-        int age = this.getAge();
+        int age = Utility.dateDiffToday(birthDate);
         int totalPoints = this.getDemeritsWithinTwoYears(date);
 
         if ((age < 21 && totalPoints > 6) || (age >= 21 && totalPoints > 12)) {
@@ -151,11 +170,14 @@ public class Person {
         return "Success";
 
     }
+
     public boolean updatePersonalDetails(Path filePath) throws IOException {
         String content = Files.readString(filePath);
         String[] parts = content.split(",");
 
-        if (parts.length != 5) return false;
+        // To check the content in the person.txt file
+        if (parts.length != 5)
+            return false;
 
         String currentID = parts[0];
         String currentFirstName = parts[1];
@@ -168,19 +190,8 @@ public class Person {
             return false;
         }
 
-        int age;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-            Date birthDateParsed = sdf.parse(currentBirthday);
-            Date today = new Date();
-            long ageInMillis = today.getTime() - birthDateParsed.getTime();
-            age = (int) (ageInMillis / (1000L * 60 * 60 * 24 * 365));
-        } catch (Exception e) {
-            return false;
-        }
-
         // Restriction: Under 18 can't change address
-        if (age < 18 && !this.address.equals(currentAddress)) {
+        if (Utility.dateDiffToday(currentBirthday) < 18 && !this.address.equals(currentAddress)) {
             return false;
         }
 
@@ -204,4 +215,23 @@ public class Person {
 
         return true;
     }
+
+    public int getDemeritsWithinTwoYears(Date referenceDate) {
+        int total = 0;
+
+        // Calculate date 2 years back the offense date
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(referenceDate);
+        cal.add(Calendar.YEAR, -2);
+        Date twoYearsAgo = cal.getTime();
+
+        // Iterating through all the offense dates
+        for (Date d : demeritPoints.keySet()) {
+            if (!d.before(twoYearsAgo) && !d.after(referenceDate)) { // include only those within 2 years before reference date
+                total += demeritPoints.get(d);
+            }
+        }
+        return total;
+    }
+
 }
