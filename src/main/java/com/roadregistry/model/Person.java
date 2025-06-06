@@ -6,10 +6,9 @@ import java.text.SimpleDateFormat;
 
 import java.util.*;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 public class Person {
+
+    // Attributes of the person class
 
     private String personID;
     private String firstName;
@@ -22,6 +21,8 @@ public class Person {
     private int points;
 
     private final String personFileName = "persons.txt";
+
+    // Getters and setters of all attributes
 
     public String getPersonID() {
         return personID;
@@ -172,11 +173,12 @@ public class Person {
 
     public boolean updatePersonalDetails(String personID) {
 
-        ArrayList<String> fileContent = new ArrayList<>();
+        ArrayList<String> fileContent = new ArrayList<>(); // To store all filecontent
         File file = new File(personFileName);
         int index = -1;
         String []parts = new String[5];
 
+        // Reading the persons text file
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
                 fileContent.add(scanner.nextLine());
@@ -186,6 +188,7 @@ public class Person {
             return false;
         }
 
+        // Finding the index of the person whose details need to be updated
         for(int i=0;i < fileContent.size(); i++) {
             String[] temp = fileContent.get(i).split(",");
 
@@ -200,13 +203,14 @@ public class Person {
             }
         }
 
+        // Splitting string into relevant parts
         String currentID = parts[0];
         String currentFirstName = parts[1];
         String currentLastName = parts[2];
         String currentAddress = parts[3];
         String currentBirthday = parts[4];
 
-
+        // Add person validation have been added here as well
         if (!Utility.validateID(this.personID) || !Utility.validateAddress(this.address) || !Utility.validateBirthdate(this.birthDate)) {
             return false;
         }
