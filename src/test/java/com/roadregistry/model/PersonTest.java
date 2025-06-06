@@ -119,7 +119,7 @@ public class PersonTest {
 
     // All details are correct. The update will happen
     @Test
-    public void testValidUpdate() throws Exception {
+    public void testValidUpdate() {
         Person p = new Person("92^%abcXYZ", "Maria", "Lopez", "456|New Street|Melbourne|Victoria|Australia", "01-01-2000");
         p.addPerson();
         String personID = p.getPersonID();
@@ -133,9 +133,21 @@ public class PersonTest {
         assertTrue(p.updatePersonalDetails(personID));
     }
 
+    @Test
+    public void testPersonIDValidation() {
+        Person p = new Person("78$#jkghLO", "Richard","Hendricks","458| Newell Street|Melbourne|Victoria|Australia", "05-12-2003");
+        p.addPerson();
+
+        String personID = p.getPersonID();
+
+        p.setPersonID("random45");
+
+        assertFalse(p.updatePersonalDetails(personID));
+    }
+
     // The address won't change here since the person is under 18
     @Test
-    public void testInvalidAddressForUnder18() throws Exception {
+    public void testInvalidAddressForUnder18() {
         Person p = new Person("64*&irthPO", "Jane", "Doe", "7|siddeley street|Melbourne|Victoria|Australia", "01-01-2010");
         p.addPerson();
 
@@ -146,7 +158,7 @@ public class PersonTest {
 
     // We are trying to change birthdate and lastname together which cannot happen
     @Test
-    public void testBirthdateChange() throws Exception {
+    public void testBirthdateChange() {
         Person p = new Person("56()qwe4HJ", "Amy", "Santiago", "601|Little Lonsdale|Melbourne|Victoria|Australia", "01-01-2001");
         p.addPerson();
 
@@ -157,7 +169,7 @@ public class PersonTest {
 
     // Change of id shouldn't work since first character is an even number
     @Test
-    public void testIDChange() throws Exception {
+    public void testIDChange() {
         Person p = new Person("46#@dfu*KL", "Rosa", "Diaz", "576|Little Collins|Melbourne|Victoria|Australia", "01-01-2002");
         p.addPerson();
         String personID = p.getPersonID();

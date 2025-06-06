@@ -170,7 +170,7 @@ public class Person {
 
     }
 
-    public boolean updatePersonalDetails(String personID) throws IOException {
+    public boolean updatePersonalDetails(String personID) {
 
         ArrayList<String> fileContent = new ArrayList<>();
         File file = new File(personFileName);
@@ -182,7 +182,7 @@ public class Person {
                 fileContent.add(scanner.nextLine());
             }
         } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error reading the file"+e.getMessage());
             return false;
         }
 
@@ -236,6 +236,8 @@ public class Person {
             for (String s : fileContent) {
                 writer.write(s + "\n");
             }
+        } catch (IOException e) {
+            System.out.println("Error writing to file: " + e.getMessage());
         }
 
         return true;
