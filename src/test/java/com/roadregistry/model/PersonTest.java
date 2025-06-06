@@ -38,13 +38,14 @@ public class PersonTest {
         assertFalse(person.addPerson());
     }
 
-    // All details are correct. This test will pass
+    // All details are correct. This test will add details to file
     @Test
     public void testPersonDetailInsertion() {
         Person person = new Person("58s_d%&fAB", "Foo", "Bar","32|Highland Street|Melbourne|Victoria|Australia", "15-11-1990");
         assertTrue(person.addPerson());
     }
 
+    // Adding demerit points to the system
     @Test
     public void testValidInputUnder21_NotSuspended() {
         Person p = new Person("23@#abcXY", "Alex", "Young", "45|Oak Avenue|Melbourne|Victoria|Australia", "10-05-2007");
@@ -54,6 +55,7 @@ public class PersonTest {
         assertEquals("Success", result);
     }
 
+    // Testing invalid date format in offense date
     @Test
     public void testInvalidDateFormat() {
         Person p = new Person("56$*kloMN", "Nina", "Lee", "88|River Road|Melbourne|Victoria|Australia", "15-03-2006");
@@ -63,6 +65,7 @@ public class PersonTest {
         assertEquals("Invalid date format. Use DD-MM-YYYY", result);
     }
 
+    // Testing range of the demerit points
     @Test
     public void testInvalidDemeritPoints() {
         Person p = new Person("39##zxcEP", "Hannah", "Lee", "77|Exhibition Road|Melbourne|Victoria|Australia", "09-09-1993");
@@ -72,6 +75,7 @@ public class PersonTest {
         assertEquals("Invalid demerit points. Must be between 1 and 6", result);
     }
 
+    // Test for valid demerit points
     @Test
     public void testvalidDemeritPoints() {
         Person p = new Person("89@@lmnWR", "Sophia", "Tan", "21|George Street|Melbourne|Victoria|Australia", "13-12-2000");
@@ -81,6 +85,7 @@ public class PersonTest {
         assertEquals("Success", result);
     }
 
+    // Testing suspension if age > 21 and points more than 12
     @Test
     public void testSuspensionOver21() {
         Person p = new Person("34$#mnoQT", "Daniel", "Smith", "67|Maple Lane|Melbourne|Victoria|Australia", "08-04-2001"); // Age > 21
@@ -99,6 +104,7 @@ public class PersonTest {
         assertTrue(p.isSuspended(), "Person should be suspended when demerit points exceed 12 for age 21 or over.");
     }
 
+    // Testing no suspension if age > 21 but points less than 12
     @Test
     public void testNotSuspensionOver21() {
         Person p = new Person("78!&ghrAZ", "John", "Doe", "12|Hillview Drive|Melbourne|Victoria|Australia", "01-01-1990"); // Age > 21
@@ -133,6 +139,7 @@ public class PersonTest {
         assertTrue(p.updatePersonalDetails(personID));
     }
 
+    // Testing person ID validation
     @Test
     public void testPersonIDValidation() {
         Person p = new Person("78$#jkghLO", "Richard","Hendricks","458| Newell Street|Melbourne|Victoria|Australia", "05-12-2003");
